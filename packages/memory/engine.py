@@ -1,6 +1,6 @@
 import uuid
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from packages.shared.schemas import MemoryItem, UserMessage, AgentTask
 
@@ -45,7 +45,6 @@ class MemoryEngine:
 
     def add_short_term_message(self, message: UserMessage):
         self.short_term_messages.append(message)
-        # Keep last 50 messages in short-term context window
         if len(self.short_term_messages) > 50:
             self.short_term_messages.pop(0)
 
@@ -58,7 +57,7 @@ class MemoryEngine:
             "action": action,
             "result": result,
             "details": details or {},
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         self.episodic_memories.append(event)
 
@@ -69,7 +68,7 @@ class MemoryEngine:
             item.observation_count += 1
             item.confidence = min(1.0, item.confidence + 0.05)
             item.user_confirmed = item.user_confirmed or user_confirmed
-            item.last_updated = datetime.utcnow()
+            item.last_updated = datetime.now(timezone.utc)
         else:
             item = MemoryItem(
                 id=str(uuid.uuid4()),

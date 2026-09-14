@@ -1,7 +1,7 @@
 import uuid
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Callable, Optional
 
 logger = logging.getLogger("switch.workflows.runner")
@@ -33,7 +33,7 @@ class WorkflowRunner:
         self.running = True
         logger.info("WorkflowRunner background daemon started.")
         while self.running:
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             for st in list(self.tasks.values()):
                 if st.last_run is None or (now - st.last_run).total_seconds() >= st.interval_seconds:
                     try:
@@ -42,7 +42,7 @@ class WorkflowRunner:
                             await st.action()
                         else:
                             st.action()
-                        st.last_run = datetime.utcnow()
+                        st.last_run = datetime.now(timezone.utc)
                         st.run_count += 1
                         if not st.is_recurring:
                             del self.tasks[st.id]

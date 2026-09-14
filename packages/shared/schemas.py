@@ -1,7 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
+
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 
 class RiskLevel(str, Enum):
@@ -53,7 +57,7 @@ class UserMessage(BaseModel):
     id: str
     role: str  # "user" | "assistant" | "system"
     content: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
     multimodal_data: Optional[Dict[str, Any]] = None
 
 
@@ -97,8 +101,8 @@ class AgentTask(BaseModel):
     assigned_agent: AgentType
     steps: List[AgentTaskStep] = []
     status: str = "IN_PROGRESS"  # IN_PROGRESS, COMPLETED, FAILED, WAITING_APPROVAL
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
 
 
 class SystemTelemetry(BaseModel):
@@ -109,7 +113,7 @@ class SystemTelemetry(BaseModel):
     disk_free_gb: float
     active_window_title: str
     running_processes_count: int
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
 
 
 class MemoryItem(BaseModel):
@@ -120,8 +124,8 @@ class MemoryItem(BaseModel):
     confidence: float = 1.0
     user_confirmed: bool = False
     observation_count: int = 1
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    last_updated: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
+    last_updated: datetime = Field(default_factory=utc_now)
 
 
 class LearnedWorkflow(BaseModel):
@@ -133,7 +137,7 @@ class LearnedWorkflow(BaseModel):
     confidence: float
     user_approved: bool
     execution_count: int = 0
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class PhoneCallRequest(BaseModel):
@@ -152,4 +156,4 @@ class AuditLogEntry(BaseModel):
     risk_level: RiskLevel
     execution_result: str
     error: Optional[str] = None
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)

@@ -1,6 +1,6 @@
 import uuid
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from packages.shared.schemas import RiskLevel, AuditLogEntry, AgentType
 
@@ -74,7 +74,7 @@ class PermissionEngine:
                 "reasoning_summary": reasoning_summary,
                 "user_command": user_command,
                 "status": "PENDING",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
             }
             self.pending_approvals[approval_id] = approval_request
             logger.info(f"Created approval checkpoint {approval_id} for {tool_name} [{risk_level}]")
@@ -127,7 +127,7 @@ class PermissionEngine:
             risk_level=risk_level,
             execution_result=execution_result,
             error=error,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
         )
         self.audit_logs.append(entry)
         return entry_id

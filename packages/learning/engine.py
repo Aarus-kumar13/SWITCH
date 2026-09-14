@@ -1,6 +1,6 @@
 import uuid
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from packages.shared.schemas import LearnedWorkflow, MemoryItem
 from packages.memory.engine import MemoryEngine
@@ -39,7 +39,7 @@ class PersonalLearningEngine:
         user_feedback: Optional[str] = None,
     ):
         event = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "user_input": user_input,
             "actions": actions_taken,
             "success": success,

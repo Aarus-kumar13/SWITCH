@@ -1,6 +1,6 @@
 import psutil
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any
 
 logger = logging.getLogger("switch.desktop.telemetry")
@@ -34,6 +34,6 @@ class TelemetryCollector:
             "disk_free_gb": round(disk.free / (1024**3), 2),
             "active_window_title": active_window,
             "running_processes_count": len(psutil.pids()),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         return telemetry
