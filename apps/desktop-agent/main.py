@@ -1,9 +1,17 @@
+import sys
+from pathlib import Path
+
+# Add desktop-agent folder to sys.path
+agent_dir = Path(__file__).resolve().parent
+if str(agent_dir) not in sys.path:
+    sys.path.insert(0, str(agent_dir))
+
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from apps.desktop_agent.computer.os_tools import OSTools
-from apps.desktop_agent.system.telemetry import TelemetryCollector
-from apps.desktop_agent.vision.screen import ScreenVision
+from computer.os_tools import OSTools
+from system.telemetry import TelemetryCollector
+from vision.screen import ScreenVision
 
 app = FastAPI(title="SWITCH Local Desktop Agent", version="1.0.0")
 
@@ -41,4 +49,4 @@ def capture_screen():
     return ScreenVision.analyze_screen_semantics()
 
 if __name__ == "__main__":
-    uvicorn.run("apps.desktop-agent.main:app", host="127.0.0.1", port=8001, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
