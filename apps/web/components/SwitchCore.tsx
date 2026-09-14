@@ -4,7 +4,7 @@ import React from "react";
 import { Mic, MicOff, Sparkles, AlertCircle, CheckCircle, Cpu, Radio, PhoneCall } from "lucide-react";
 import { AssistantState } from "./StateIndicator";
 
-interface JarvisCoreProps {
+interface SwitchCoreProps {
   state: AssistantState;
   currentAction?: string;
   isListening: boolean;
@@ -12,7 +12,7 @@ interface JarvisCoreProps {
   onTriggerCall: () => void;
 }
 
-export const JarvisCore: React.FC<JarvisCoreProps> = ({
+export const SwitchCore: React.FC<SwitchCoreProps> = ({
   state,
   currentAction,
   isListening,
@@ -54,7 +54,7 @@ export const JarvisCore: React.FC<JarvisCoreProps> = ({
         {/* Ring 3 - Glowing Core Orbit */}
         <div className="absolute inset-8 rounded-full border border-blue-500/20" />
 
-        {/* Central JARVIS Reactor Core */}
+        {/* Central SWITCH Core */}
         <button
           onClick={onToggleListen}
           className={`relative flex items-center justify-center w-36 h-36 md:w-44 md:h-44 rounded-full bg-gradient-to-tr ${getCoreGlow()} transition-all duration-700 cursor-pointer group hover:scale-105 active:scale-95`}

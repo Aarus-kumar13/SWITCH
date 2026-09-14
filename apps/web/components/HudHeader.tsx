@@ -23,7 +23,7 @@ export const HudHeader: React.FC<HudHeaderProps> = ({ onTriggerCall, onOpenMacro
 
   return (
     <header className="w-full border-b border-cyan-500/20 bg-slate-950/80 backdrop-blur-xl px-6 py-3 flex items-center justify-between sticky top-0 z-50">
-      {/* JARVIS Brand Logo & System Status */}
+      {/* SWITCH Brand Logo & System Status */}
       <div className="flex items-center gap-4">
         <div className="relative flex items-center justify-center w-10 h-10 rounded-lg bg-slate-900 border border-cyan-500/40 text-cyan-400 font-mono font-black text-xl shadow-[0_0_15px_rgba(6,182,212,0.3)]">
           S
@@ -33,7 +33,7 @@ export const HudHeader: React.FC<HudHeaderProps> = ({ onTriggerCall, onOpenMacro
           <div className="flex items-center gap-2">
             <h1 className="text-base font-extrabold tracking-widest text-slate-100 uppercase font-mono">SWITCH OS</h1>
             <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/40 font-bold">
-              JARVIS CORE v2.5
+              SWITCH CORE v2.5
             </span>
           </div>
           <p className="text-[10px] text-cyan-400/80 font-mono tracking-wider">AUTONOMOUS PERSONAL AI OPERATING SYSTEM</p>
@@ -44,7 +44,7 @@ export const HudHeader: React.FC<HudHeaderProps> = ({ onTriggerCall, onOpenMacro
       <div className="hidden md:flex items-center gap-3 font-mono text-xs bg-slate-900/80 px-4 py-1.5 rounded-full border border-cyan-500/30 text-cyan-300 shadow-inner">
         <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
         <span>SYS TIME:</span>
-        <span className="font-bold text-slate-100 tracking-wider">{timeStr || "21:24:00"}</span>
+        <span className="font-bold text-slate-100 tracking-wider">{timeStr || "21:28:00"}</span>
         <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping" />
         <span className="text-[10px] text-green-400 font-bold">ONLINE</span>
       </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Mic, Send, PhoneCall, ShieldAlert, Sparkles, Terminal, Activity, Brain } from "lucide-react";
-import { JarvisCore } from "@/components/JarvisCore";
+import { SwitchCore } from "@/components/SwitchCore";
 import { HudHeader } from "@/components/HudHeader";
 import { QuickActions } from "@/components/QuickActions";
 import { ActiveTasksCard } from "@/components/ActiveTasksCard";
@@ -11,13 +11,13 @@ import { ActivityTimeline, ActivityItem } from "@/components/ActivityTimeline";
 import { MemoryControlCenter } from "@/components/MemoryControlCenter";
 import { AssistantState } from "@/components/StateIndicator";
 
-export default function JarvisDashboard() {
+export default function SwitchDashboard() {
   const [inputQuery, setInputQuery] = useState("");
   const [assistantState, setAssistantState] = useState<AssistantState>("IDLE");
   const [currentAction, setCurrentAction] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
   const [chatLog, setChatLog] = useState<Array<{ role: string; content: string }>>([
-    { role: "assistant", content: "SWITCH OS JARVIS Core online. All 14 specialized agents initialized. How can I help you?" },
+    { role: "assistant", content: "SWITCH OS Core online. All 14 specialized agents initialized. How can I help you?" },
   ]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [memories, setMemories] = useState<any[]>([]);
@@ -56,7 +56,6 @@ export default function JarvisDashboard() {
     setAssistantState("THINKING");
     setCurrentAction(`Analyzing request & context for: "${text.slice(0, 35)}..."`);
 
-    // Simulated multi-step progress feedback as specified in Section 36
     setTimeout(() => {
       setAssistantState("PLANNING");
       setCurrentAction("Formulating multi-step execution plan...");
@@ -107,7 +106,6 @@ export default function JarvisDashboard() {
       setIsListening(true);
       setAssistantState("LISTENING");
       setCurrentAction("Listening to voice input...");
-      // Auto-simulate voice input capture after 3.5s
       setTimeout(() => {
         if (isListening) {
           handleSendMessage("SWITCH, inspect my project and check server telemetry.");
@@ -169,7 +167,7 @@ export default function JarvisDashboard() {
 
   return (
     <main className="min-h-screen bg-[#030712] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
-      {/* JARVIS HUD Header */}
+      {/* SWITCH HUD Header */}
       <HudHeader
         onTriggerCall={handleTriggerCall}
         onOpenMacro={() => handleSendMessage("SWITCH, start my React project development environment.")}
@@ -182,11 +180,11 @@ export default function JarvisDashboard() {
 
         {/* Central Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: JARVIS Core & Command Console */}
+          {/* Left Column: SWITCH Core & Command Console */}
           <div className="lg:col-span-7 flex flex-col space-y-6">
-            {/* Glowing JARVIS Reactor Core Visualizer */}
+            {/* Glowing SWITCH Core Visualizer */}
             <div className="glass-panel border-cyan-500/20 bg-slate-950/80 rounded-2xl relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.1)]">
-              <JarvisCore
+              <SwitchCore
                 state={assistantState}
                 currentAction={currentAction}
                 isListening={isListening}
@@ -200,7 +198,7 @@ export default function JarvisDashboard() {
               <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
                 <span className="text-xs font-mono text-cyan-400 flex items-center gap-2 font-bold">
                   <Terminal className="w-4 h-4 text-cyan-400" />
-                  JARVIS MULTIMODAL CONSOLE
+                  SWITCH MULTIMODAL CONSOLE
                 </span>
                 <span className="text-[10px] font-mono text-slate-500">VOICE & TEXT ONLINE</span>
               </div>
