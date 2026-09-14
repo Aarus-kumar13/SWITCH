@@ -1,0 +1,3 @@
+"""
+SWITCH API Routes Package.
+"""

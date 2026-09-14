@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Virtual Environments
+venv/
+env/
+ENV/
