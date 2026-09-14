@@ -1,26 +1,29 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Mic, Send, PhoneCall, Monitor, Brain, Terminal, ShieldAlert, Cpu, Sparkles } from "lucide-react";
-import { StateIndicator, AssistantState } from "@/components/StateIndicator";
-import { AudioWaveform } from "@/components/AudioWaveform";
+import { Mic, Send, PhoneCall, ShieldAlert, Sparkles, Terminal, Activity, Brain } from "lucide-react";
+import { JarvisCore } from "@/components/JarvisCore";
+import { HudHeader } from "@/components/HudHeader";
+import { QuickActions } from "@/components/QuickActions";
+import { ActiveTasksCard } from "@/components/ActiveTasksCard";
 import { TelemetryWidget } from "@/components/TelemetryWidget";
 import { ActivityTimeline, ActivityItem } from "@/components/ActivityTimeline";
 import { MemoryControlCenter } from "@/components/MemoryControlCenter";
+import { AssistantState } from "@/components/StateIndicator";
 
-export default function SwitchDashboard() {
+export default function JarvisDashboard() {
   const [inputQuery, setInputQuery] = useState("");
   const [assistantState, setAssistantState] = useState<AssistantState>("IDLE");
   const [currentAction, setCurrentAction] = useState<string>("");
+  const [isListening, setIsListening] = useState<boolean>(false);
   const [chatLog, setChatLog] = useState<Array<{ role: string; content: string }>>([
-    { role: "assistant", content: "SWITCH Autonomous Personal AI Operating System online. How can I assist you today?" },
+    { role: "assistant", content: "SWITCH OS JARVIS Core online. All 14 specialized agents initialized. How can I help you?" },
   ]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [memories, setMemories] = useState<any[]>([]);
   const [userProfile, setUserProfile] = useState<any>({});
   const [pendingApproval, setPendingApproval] = useState<any>(null);
 
-  // Fetch initial activities and memories
   const fetchData = async () => {
     try {
       const actRes = await fetch("http://localhost:8000/api/system/activity");
@@ -34,9 +37,7 @@ export default function SwitchDashboard() {
         setMemories(data.semantic_memories || []);
         setUserProfile(data.user_profile || {});
       }
-    } catch (e) {
-      // Backend fallback
-    }
+    } catch (e) {}
   };
 
   useEffect(() => {
@@ -51,8 +52,20 @@ export default function SwitchDashboard() {
 
     setChatLog((prev) => [...prev, { role: "user", content: text }]);
     setInputQuery("");
+    setIsListening(false);
     setAssistantState("THINKING");
-    setCurrentAction(`Routing intent for: "${text.slice(0, 30)}..."`);
+    setCurrentAction(`Analyzing request & context for: "${text.slice(0, 35)}..."`);
+
+    // Simulated multi-step progress feedback as specified in Section 36
+    setTimeout(() => {
+      setAssistantState("PLANNING");
+      setCurrentAction("Formulating multi-step execution plan...");
+    }, 800);
+
+    setTimeout(() => {
+      setAssistantState("EXECUTING");
+      setCurrentAction("Executing authorized tools & computer agents...");
+    }, 1600);
 
     try {
       const res = await fetch("http://localhost:8000/api/chat", {
@@ -64,7 +77,7 @@ export default function SwitchDashboard() {
       if (res.ok) {
         const data = await res.json();
         setAssistantState(data.requires_approval ? "WAITING" : "SUCCESS");
-        setCurrentAction(data.requires_approval ? "Awaiting Human Approval" : "Task Completed");
+        setCurrentAction(data.requires_approval ? "Requires Human Approval Checkpoint" : "Verified successfully.");
 
         if (data.requires_approval && data.approval_id) {
           setPendingApproval({ approval_id: data.approval_id, message: data.response });
@@ -80,21 +93,39 @@ export default function SwitchDashboard() {
       setAssistantState("ERROR");
       setChatLog((prev) => [
         ...prev,
-        { role: "assistant", content: "SWITCH core backend is starting up or unreachable. Autonomous local mode standby." },
+        { role: "assistant", content: "SWITCH backend is starting up or unreachable. Standby mode active." },
       ]);
+    }
+  };
+
+  const handleToggleListen = () => {
+    if (isListening) {
+      setIsListening(false);
+      setAssistantState("IDLE");
+      setCurrentAction("");
+    } else {
+      setIsListening(true);
+      setAssistantState("LISTENING");
+      setCurrentAction("Listening to voice input...");
+      // Auto-simulate voice input capture after 3.5s
+      setTimeout(() => {
+        if (isListening) {
+          handleSendMessage("SWITCH, inspect my project and check server telemetry.");
+        }
+      }, 3500);
     }
   };
 
   const handleTriggerCall = async () => {
     setAssistantState("CALLING");
-    setCurrentAction("Initiating Outbound Phone Call to user's phone...");
+    setCurrentAction("Initiating Outbound Phone Call to registered phone number...");
     try {
       const res = await fetch("http://localhost:8000/api/phone/call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to_phone_number: "+1987654321",
-          context_summary: "Deployment inspection & technical assistance request",
+          context_summary: "Deployment inspection & technical problem discussion",
         }),
       });
       if (res.ok) {
@@ -118,7 +149,6 @@ export default function SwitchDashboard() {
         body: JSON.stringify({ approval_id: pendingApproval.approval_id, approved }),
       });
       if (res.ok) {
-        const data = await res.json();
         setPendingApproval(null);
         setAssistantState("SUCCESS");
         setChatLog((prev) => [
@@ -138,134 +168,124 @@ export default function SwitchDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Futuristic Header */}
-      <header className="border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-slate-950 font-black tracking-widest text-lg shadow-lg shadow-cyan-500/20">
-            S
-          </div>
-          <div>
-            <h1 className="text-base font-bold tracking-wider text-slate-100 uppercase">SWITCH OS</h1>
-            <p className="text-[10px] text-cyan-400 font-mono tracking-wide">AUTONOMOUS PERSONAL AI OPERATING SYSTEM</p>
-          </div>
-        </div>
+    <main className="min-h-screen bg-[#030712] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
+      {/* JARVIS HUD Header */}
+      <HudHeader
+        onTriggerCall={handleTriggerCall}
+        onOpenMacro={() => handleSendMessage("SWITCH, start my React project development environment.")}
+      />
 
-        {/* Quick Action Badges */}
-        <div className="flex items-center gap-2 text-xs">
-          <button
-            onClick={handleTriggerCall}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition font-medium"
-          >
-            <PhoneCall className="w-3.5 h-3.5" />
-            Phone Call AI
-          </button>
+      {/* Main Grid Content */}
+      <div className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
+        {/* Quick Action HUD Bar (Section 35 Spec) */}
+        <QuickActions onActionClick={(cmd) => handleSendMessage(cmd)} />
 
-          <button
-            onClick={() => handleSendMessage("SWITCH, start my React project development mode.")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 transition font-medium"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Dev Mode Macro
-          </button>
-        </div>
-      </header>
-
-      {/* Main Grid Body */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-7xl mx-auto w-full">
-        {/* Left Column: Visual Assistant & Interactive Workspace */}
-        <div className="lg:col-span-7 flex flex-col space-y-6">
-          {/* Visual State & Audio Waveform Card */}
-          <div className="glass-panel rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden">
-            <StateIndicator state={assistantState} currentAction={currentAction} />
-            <AudioWaveform active={assistantState === "LISTENING" || assistantState === "SPEAKING"} />
-          </div>
-
-          {/* Chat & Command Input Box */}
-          <div className="glass-panel rounded-2xl p-4 flex flex-col h-[380px]">
-            <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-3">
-              {chatLog.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                >
-                  <div
-                    className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
-                      msg.role === "user"
-                        ? "bg-blue-600 text-white rounded-br-none"
-                        : "bg-slate-900/80 border border-slate-800 text-slate-200 rounded-bl-none font-mono"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Input Bar */}
-            <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
-              <input
-                type="text"
-                value={inputQuery}
-                onChange={(e) => setInputQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder="Talk to SWITCH or type an autonomous command..."
-                className="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono transition"
+        {/* Central Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: JARVIS Core & Command Console */}
+          <div className="lg:col-span-7 flex flex-col space-y-6">
+            {/* Glowing JARVIS Reactor Core Visualizer */}
+            <div className="glass-panel border-cyan-500/20 bg-slate-950/80 rounded-2xl relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.1)]">
+              <JarvisCore
+                state={assistantState}
+                currentAction={currentAction}
+                isListening={isListening}
+                onToggleListen={handleToggleListen}
+                onTriggerCall={handleTriggerCall}
               />
-              <button
-                onClick={() => setAssistantState(assistantState === "LISTENING" ? "IDLE" : "LISTENING")}
-                className={`p-2.5 rounded-xl border transition ${
-                  assistantState === "LISTENING"
-                    ? "bg-cyan-500 text-slate-950 border-cyan-400 animate-pulse"
-                    : "bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200"
-                }`}
-                title="Voice Input"
-              >
-                <Mic className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleSendMessage()}
-                className="p-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-slate-950 font-bold hover:opacity-90 transition"
-              >
-                <Send className="w-4 h-4" />
-              </button>
+            </div>
+
+            {/* High-Tech Terminal Command Console */}
+            <div className="glass-panel border-cyan-500/20 bg-slate-950/90 rounded-2xl p-4 flex flex-col h-[380px] shadow-xl">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                <span className="text-xs font-mono text-cyan-400 flex items-center gap-2 font-bold">
+                  <Terminal className="w-4 h-4 text-cyan-400" />
+                  JARVIS MULTIMODAL CONSOLE
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">VOICE & TEXT ONLINE</span>
+              </div>
+
+              {/* Chat Log Stream */}
+              <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-3">
+                {chatLog.map((msg, i) => (
+                  <div key={i} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
+                    <div
+                      className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
+                        msg.role === "user"
+                          ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-slate-950 font-bold rounded-br-none shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                          : "bg-slate-900/90 border border-cyan-500/20 text-cyan-100 rounded-bl-none font-mono shadow-inner"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Command Input Bar */}
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
+                <input
+                  type="text"
+                  value={inputQuery}
+                  onChange={(e) => setInputQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                  placeholder='Say "SWITCH, look at this..." or type a command...'
+                  className="flex-1 bg-slate-950 border border-cyan-500/30 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono transition shadow-inner"
+                />
+                <button
+                  onClick={handleToggleListen}
+                  className={`p-2.5 rounded-xl border transition ${
+                    isListening
+                      ? "bg-cyan-400 text-slate-950 border-cyan-300 animate-pulse shadow-[0_0_20px_rgba(6,182,212,0.8)]"
+                      : "bg-slate-900 border-cyan-500/30 text-cyan-400 hover:bg-slate-800"
+                  }`}
+                  title="Voice Command"
+                >
+                  <Mic className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleSendMessage()}
+                  className="p-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-400 text-slate-950 font-bold hover:brightness-110 transition shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Column: Telemetry, Memory Control, Activity Audit */}
-        <div className="lg:col-span-5 flex flex-col space-y-5">
-          <TelemetryWidget />
-          <MemoryControlCenter
-            memories={memories}
-            userProfile={userProfile}
-            onDeleteMemory={handleDeleteMemory}
-          />
-          <ActivityTimeline activities={activities} />
+          {/* Right Column: HUD Widgets & Telemetry */}
+          <div className="lg:col-span-5 flex flex-col space-y-5">
+            <TelemetryWidget />
+            <ActiveTasksCard tasks={[]} />
+            <MemoryControlCenter memories={memories} userProfile={userProfile} onDeleteMemory={handleDeleteMemory} />
+            <ActivityTimeline activities={activities} />
+          </div>
         </div>
       </div>
 
       {/* Human Approval Dialog Modal */}
       {pendingApproval && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="glass-panel border-amber-500/40 rounded-2xl p-6 max-w-md w-full space-y-4 text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <ShieldAlert className="w-6 h-6" />
+        <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="glass-panel border-amber-500/50 bg-slate-950/95 rounded-2xl p-6 max-w-md w-full space-y-4 text-center shadow-[0_0_50px_rgba(245,158,11,0.3)]">
+            <div className="mx-auto w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400">
+              <ShieldAlert className="w-6 h-6 animate-pulse" />
             </div>
-            <h3 className="text-base font-bold text-slate-100">Human Approval Required</h3>
-            <p className="text-xs text-slate-400 font-mono leading-relaxed">{pendingApproval.message}</p>
+            <h3 className="text-base font-mono font-bold text-slate-100 uppercase tracking-wider">HUMAN APPROVAL REQUIRED</h3>
+            <p className="text-xs text-slate-300 font-mono leading-relaxed bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+              {pendingApproval.message}
+            </p>
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => handleConfirmApproval(false)}
-                className="flex-1 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-400 hover:bg-slate-800"
+                className="flex-1 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono font-semibold text-slate-400 hover:bg-slate-800"
               >
-                Reject Action
+                REJECT
               </button>
               <button
                 onClick={() => handleConfirmApproval(true)}
-                className="flex-1 py-2 rounded-xl bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400"
+                className="flex-1 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-mono text-xs font-bold hover:bg-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
               >
-                Approve & Execute
+                APPROVE & EXECUTE
               </button>
             </div>
           </div>

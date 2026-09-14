@@ -8,11 +8,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#090a0f',
-        card: '#12151e',
-        primary: '#3b82f6',
-        accent: '#8b5cf6',
-        cyanAccent: '#06b6d4',
+        background: '#030712',
+        card: '#0b0f19',
+        primary: '#06b6d4',
+        accent: '#3b82f6',
+      },
+      animation: {
+        'spin-slow': 'spin 12s linear infinite',
       },
     },
   },
